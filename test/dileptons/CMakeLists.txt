@@ -34,6 +34,8 @@ function(dilepton_test
     else()
       # no filter
       set(test_name "${system}_${Ekin}_unfiltered")
+      # For HADES prediction pion counting
+      set(pion_average_total_file "${CMAKE_CURRENT_BINARY_DIR}/${test_name}/other.avg_pion.dat")
       # no data
       set(data_dir "")
     endif()
@@ -62,7 +64,7 @@ function(dilepton_test
         set(pion_file "${data_folder}/other.avg_pion.dat")
         list(APPEND hist_files ${hist_file})
         list(APPEND pion_files ${pion_file})
-        if (system STREQUAL "CC" OR system STREQUAL "ArKCl")
+        if (system STREQUAL "CC" OR system STREQUAL "ArKCl" OR system STREQUAL "AuAu")
           set(output_files "${data_file}" "${data_folder}/particle_lists.oscar" ${data_folder}/config.yaml)
         else()
           set(output_files "${data_file}" ${data_folder}/config.yaml)
@@ -391,7 +393,7 @@ dilepton_test("CC" "1.0")
 dilepton_test("CC" "2.0")
 
 dilepton_test("ArKCl" "1.76")
-dilepton_test("AuAu" "1.25")
+dilepton_test("AuAu" "1.23")
 dilepton_test("AgAg" "1.67")
 
 ## tests with filtering ##

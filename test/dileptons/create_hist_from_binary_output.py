@@ -199,9 +199,9 @@ with sbs.BinaryReader(args.data_file) as reader:
                 hist_pt  [np.digitize([pt],       bins_pt), decay_channel] += shining_weight
                 hist_y   [np.digitize([y],        bins_y),  decay_channel] += shining_weight
 
-                if 0.0 < p_ee < 0.2: hist_mass_0_200   [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
-                if 0.2 < p_ee < 0.4: hist_mass_200_400 [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
-                if 0.4 < p_ee < 1.0: hist_mass_400     [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.0 < pt < 0.2: hist_mass_0_200   [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.2 < pt < 0.4: hist_mass_200_400 [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.4 < pt < 1.0: hist_mass_400     [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
 
                 if 0.00 < inv_mass < 0.15: hist_pt_0_150   [np.digitize([pt], bins_pt), decay_channel] += shining_weight
                 if 0.15 < inv_mass < 0.30: hist_pt_150_300 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
