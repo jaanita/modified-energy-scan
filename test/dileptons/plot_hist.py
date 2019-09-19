@@ -196,9 +196,9 @@ if plot_with_data:
              datafile="ekin" + args.energy + ".exp")
 else:
     plot("mass",         mass_bf, ch_list_main, style_dict_mass)
-    plot("mass_0_200",   mass_bf, ch_list_main, style_dict_mass, cut_legend=", 0 MeV   < m < 200 MeV")
-    plot("mass_200_400", mass_bf, ch_list_main, style_dict_mass, cut_legend=", 200 MeV < m < 400 MeV")
-    plot("mass_400",     mass_bf, ch_list_main, style_dict_mass, cut_legend=", 400 MeV < m < 1000 MeV")
+    plot("mass_0_200",   mass_bf, ch_list_main, style_dict_mass, cut_legend=", 0 MeV   < pT < 200 MeV")
+    plot("mass_200_400", mass_bf, ch_list_main, style_dict_mass, cut_legend=", 200 MeV < pT < 400 MeV")
+    plot("mass_400",     mass_bf, ch_list_main, style_dict_mass, cut_legend=", 400 MeV < pT < 1000 MeV")
 
 
 
