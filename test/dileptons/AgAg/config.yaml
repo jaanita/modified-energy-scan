@@ -28,6 +28,6 @@ Modi:
         Target:
             Particles: {2212: 47, 2112: 61} # Silver
 
-        E_Kin: 1.58
+        E_Kin: 1.67
         Fermi_Motion: "frozen"
         Calculation_Frame: "fixed target"

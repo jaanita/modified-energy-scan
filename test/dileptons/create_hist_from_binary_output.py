@@ -100,25 +100,28 @@ HADES_filter.init = False
 
 ### HISTOGRAM INIT ###
 
-hist_mass       = np.zeros((nbins_m + 2, n_channels))
-hist_mass_0_800 = np.zeros((nbins_m + 2, n_channels))
-hist_mass_800   = np.zeros((nbins_m + 2, n_channels))
-hist_mass_rho   = np.zeros((nbins_m + 2, max(rho_channels.values()) + 1))
-hist_mass_omega = np.zeros((nbins_m + 2, max(omega_channels.values()) + 1))
+hist_mass         = np.zeros((nbins_m + 2, n_channels))
+hist_mass_0_200   = np.zeros((nbins_m + 2, n_channels))
+hist_mass_200_400 = np.zeros((nbins_m + 2, n_channels))
+hist_mass_400     = np.zeros((nbins_m + 2, n_channels))  # up to 1000 MeV
+hist_mass_rho     = np.zeros((nbins_m + 2, max(rho_channels.values()) + 1))
+hist_mass_omega   = np.zeros((nbins_m + 2, max(omega_channels.values()) + 1))
 
 hist_pt         = np.zeros((nbins_pt + 2, n_channels))
 hist_pt_0_150   = np.zeros((nbins_pt + 2, n_channels))
-hist_pt_150_470 = np.zeros((nbins_pt + 2, n_channels))
-hist_pt_470_700 = np.zeros((nbins_pt + 2, n_channels))
-hist_pt_700     = np.zeros((nbins_pt + 2, n_channels))
+hist_pt_150_300 = np.zeros((nbins_pt + 2, n_channels))
+hist_pt_300_450 = np.zeros((nbins_pt + 2, n_channels))
+hist_pt_450_600 = np.zeros((nbins_pt + 2, n_channels))
+hist_pt_600     = np.zeros((nbins_pt + 2, n_channels))  # up to 1000 MeV
 hist_pt_rho     = np.zeros((nbins_pt + 2, max(rho_channels.values()) + 1))
 hist_pt_omega   = np.zeros((nbins_pt + 2, max(omega_channels.values()) + 1))
 
 hist_y          = np.zeros((nbins_y  + 2, n_channels))
 hist_y_0_150    = np.zeros((nbins_y  + 2, n_channels))
-hist_y_150_470  = np.zeros((nbins_y  + 2, n_channels))
-hist_y_470_700  = np.zeros((nbins_y  + 2, n_channels))
-hist_y_700      = np.zeros((nbins_y  + 2, n_channels))
+hist_y_150_300  = np.zeros((nbins_y  + 2, n_channels))
+hist_y_300_450  = np.zeros((nbins_y  + 2, n_channels))
+hist_y_450_600  = np.zeros((nbins_y  + 2, n_channels))
+hist_y_600      = np.zeros((nbins_y  + 2, n_channels))  # up to 1000 MeV
 hist_y_rho      = np.zeros((nbins_y  + 2, max(rho_channels.values()) + 1))
 hist_y_omega    = np.zeros((nbins_y  + 2, max(omega_channels.values()) + 1))
 
@@ -196,18 +199,21 @@ with sbs.BinaryReader(args.data_file) as reader:
                 hist_pt  [np.digitize([pt],       bins_pt), decay_channel] += shining_weight
                 hist_y   [np.digitize([y],        bins_y),  decay_channel] += shining_weight
 
-                if 0.8 < p_ee: hist_mass_800   [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
-                if p_ee < 0.8: hist_mass_0_800 [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.0 < p_ee < 0.2: hist_mass_0_200   [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.2 < p_ee < 0.4: hist_mass_200_400 [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
+                if 0.4 < p_ee < 1.0: hist_mass_400     [np.digitize([inv_mass], bins_m), decay_channel] += shining_weight
 
                 if 0.00 < inv_mass < 0.15: hist_pt_0_150   [np.digitize([pt], bins_pt), decay_channel] += shining_weight
-                if 0.15 < inv_mass < 0.47: hist_pt_150_470 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
-                if 0.47 < inv_mass < 0.70: hist_pt_470_700 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
-                if 0.70 < inv_mass:        hist_pt_700     [np.digitize([pt], bins_pt), decay_channel] += shining_weight
+                if 0.15 < inv_mass < 0.30: hist_pt_150_300 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
+                if 0.30 < inv_mass < 0.45: hist_pt_300_450 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
+                if 0.45 < inv_mass < 0.60: hist_pt_450_600 [np.digitize([pt], bins_pt), decay_channel] += shining_weight
+                if 0.60 < inv_mass < 1.00: hist_pt_600     [np.digitize([pt], bins_pt), decay_channel] += shining_weight
 
-                if 0.00 < inv_mass < 0.15: hist_y_0_150    [np.digitize([y],  bins_y),  decay_channel] += shining_weight
-                if 0.15 < inv_mass < 0.47: hist_y_150_470  [np.digitize([y],  bins_y),  decay_channel] += shining_weight
-                if 0.47 < inv_mass < 0.70: hist_y_470_700  [np.digitize([y],  bins_y),  decay_channel] += shining_weight
-                if 0.70 < inv_mass:        hist_y_700      [np.digitize([y],  bins_y),  decay_channel] += shining_weight
+                if 0.00 < inv_mass < 0.15: hist_y_0_150   [np.digitize([y],  bins_y),  decay_channel] += shining_weight
+                if 0.15 < inv_mass < 0.30: hist_y_150_300 [np.digitize([y],  bins_y),  decay_channel] += shining_weight
+                if 0.30 < inv_mass < 0.45: hist_y_300_450 [np.digitize([y],  bins_y),  decay_channel] += shining_weight
+                if 0.45 < inv_mass < 0.60: hist_y_450_600 [np.digitize([y],  bins_y),  decay_channel] += shining_weight
+                if 0.70 < inv_mass < 1.00: hist_y_600     [np.digitize([y],  bins_y),  decay_channel] += shining_weight
 
                 # determine origin of rho and omega meson
                 if decay_channel == 0:  # rho
@@ -240,27 +246,30 @@ def output(hist, bins, name):
     np.savetxt("hist_" + name +".txt", np.column_stack((center[:,None], hist)))
 
 
-output(hist_mass,       bins_m, "mass")
-output(hist_mass_rho,   bins_m, "mass_rho")
-output(hist_mass_omega, bins_m, "mass_omega")
-output(hist_mass_0_800, bins_m, "mass_0_800")
-output(hist_mass_800,   bins_m, "mass_800")
+output(hist_mass,         bins_m, "mass")
+output(hist_mass_rho,     bins_m, "mass_rho")
+output(hist_mass_omega,   bins_m, "mass_omega")
+output(hist_mass_0_200,   bins_m, "mass_0_200")
+output(hist_mass_200_400, bins_m, "mass_200_400")
+output(hist_mass_400,     bins_m, "mass_400")
 
 output(hist_pt,         bins_pt, "pt")
 output(hist_pt_rho,     bins_pt, "pt_rho")
 output(hist_pt_omega,   bins_pt, "pt_omega")
 output(hist_pt_0_150,   bins_pt, "pt_0_150")
-output(hist_pt_150_470, bins_pt, "pt_150_470")
-output(hist_pt_470_700, bins_pt, "pt_470_700")
-output(hist_pt_700,     bins_pt, "pt_700")
+output(hist_pt_150_300, bins_pt, "pt_150_300")
+output(hist_pt_300_450, bins_pt, "pt_300_450")
+output(hist_pt_450_600, bins_pt, "pt_450_600")
+output(hist_pt_600,     bins_pt, "pt_600")
 
 output(hist_y,         bins_y, "y")
 output(hist_y_rho,     bins_y, "y_rho")
 output(hist_y_omega,   bins_y, "y_omega")
 output(hist_y_0_150,   bins_y, "y_0_150")
-output(hist_y_150_470, bins_y, "y_150_470")
-output(hist_y_470_700, bins_y, "y_470_700")
-output(hist_y_700,     bins_y, "y_700")
+output(hist_y_150_300, bins_y, "y_150_300")
+output(hist_y_300_450, bins_y, "y_300_450")
+output(hist_y_450_600, bins_y, "y_450_600")
+output(hist_y_600,     bins_y, "y_600")
 
 
 # delete Dilepton Output

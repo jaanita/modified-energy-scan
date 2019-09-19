@@ -53,6 +53,10 @@ Output:
     Dileptons:
         Format:             ["Binary"]
         Extended:           True
+    Particles:
+        Format:             ["Oscar2013"]
+        Extended:           False
+        Only_Final:         True
 
 Collision_Term:
     Two_to_One:             True
@@ -94,9 +98,11 @@ Modi:
         Calculation_Frame: "fixed target"
 
         # Specify an impact parameter
-        # HADES 0-40%
         Impact:
-            Max: 9.18
+            Sample: "uniform"
+            # HADES 0-10%
+            Range: [0.0, 4.7]
+
 
         # Include Fermi motion
         # ("off", "on", "frozen")

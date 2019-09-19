@@ -195,7 +195,11 @@ if plot_with_data:
         plot("mass",       mass_bf, ch_list_main, style_dict_mass_w_data_CC_ArKCl,
              datafile="ekin" + args.energy + ".exp")
 else:
-    plot("mass", mass_bf, ch_list_main, style_dict_mass)
+    plot("mass",         mass_bf, ch_list_main, style_dict_mass)
+    plot("mass_0_200",   mass_bf, ch_list_main, style_dict_mass, cut_legend=", 0 MeV   < m < 200 MeV")
+    plot("mass_200_400", mass_bf, ch_list_main, style_dict_mass, cut_legend=", 200 MeV < m < 400 MeV")
+    plot("mass_400",     mass_bf, ch_list_main, style_dict_mass, cut_legend=", 400 MeV < m < 1000 MeV")
+
 
 
 # pt spectra where data is available
@@ -209,10 +213,11 @@ if plot_with_data and args.system == "pp" and args.energy == "3.5":
         plot("pt_700",       pt_bf,   ch_list_main, style_dict_pt_w_data,
              datafile="ekin" + args.energy + "_m700_dileptons.exp", cut_legend=", 700 MeV < m")
 else:
-    plot("pt_0_150",   pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", m < 150 MeV")
-    plot("pt_150_470", pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 150 MeV < m < 470 MeV")
-    plot("pt_470_700", pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 470 MeV < m < 700 MeV")
-    plot("pt_700",     pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 700 MeV < m")
+    plot("pt_0_150",   pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 0 MeV   < m < 150 MeV")
+    plot("pt_150_300", pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 150 MeV < m < 300 MeV")
+    plot("pt_300_450", pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 300 MeV < m < 450 MeV")
+    plot("pt_450_600", pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 450 MeV < m < 600 MeV")
+    plot("pt_600",     pt_bf,   ch_list_main,  style_dict_pt, cut_legend=", 600 MeV < m < 1000 MeV")
 
 
 # y spectra where data is available
@@ -227,13 +232,14 @@ if plot_with_data and args.system == "pp" and args.energy == "3.5":
              datafile="ekin" + args.energy + "_m700_dileptons.exp", cut_legend=", 700 MeV < m")
 else:
     plot("y_0_150",   rap_bf,   ch_list_main,  style_dict_y, cut_legend=", m < 150 MeV")
-    plot("y_150_470", rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 150 MeV < m < 470 MeV")
-    plot("y_470_700", rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 470 MeV < m < 700 MeV")
-    plot("y_700",     rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 700 MeV < m")
+    plot("y_150_300", rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 150 MeV < m < 300 MeV")
+    plot("y_300_450", rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 300 MeV < m < 450 MeV")
+    plot("y_450_600", rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 450 MeV < m < 600 MeV")
+    plot("y_600",     rap_bf,   ch_list_main,  style_dict_y, cut_legend=", 600 MeV < m < 1000 MeV")
 
 
 # spectra where no data is available
-plot("pt",             pt_bf,   ch_list_main,  style_dict_pt)
+plot("pt",      pt_bf,   ch_list_main,  style_dict_pt)
 plot("y",       rap_bf,  ch_list_main,  style_dict_y)
 
 # origin plots
