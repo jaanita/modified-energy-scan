@@ -1,4 +1,4 @@
-Version: 1.7
+Version: 1.8
 
 Logging:
   default: ERROR
@@ -21,9 +21,10 @@ Output:
     Particles:
         Format:             ["Binary"]
         Extended:           False
-        Only_Final:         True
+        Only_Final:         Yes
 
 Collision_Term:
+    Collision_Criterion:    Stochastic
     Two_to_One:             True
     Strings:                True
     NNbar_Treatment:        no annihilation #Options are "no annihilation",
