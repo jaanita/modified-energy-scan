@@ -1,4 +1,4 @@
-Version: 1.7
+Version: 1.8
 
 Logging:
   default: WARN
@@ -29,7 +29,8 @@ Output:
         Print_Start_End:    False
     Particles:
         Format: ["Binary"]
-        Only_Final:         False
+        Only_Final:         No
+
 
 Modi:
     Box:
@@ -53,3 +54,4 @@ Modi:
 Collision_Term:
     Force_Decays_At_End:  False
     Strings:              False
+    Collision_Criterion:  Stochastic
