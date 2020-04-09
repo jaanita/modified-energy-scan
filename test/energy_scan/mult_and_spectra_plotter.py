@@ -186,16 +186,17 @@ class DataTree:
                         data.mthist[i] += data.mthist[j]
                         data.pthist_midrapidity[i] += data.pthist_midrapidity[j]
                         data.yhist[i] += data.yhist[j]
-                    if (q == 'total_multiplicity'): to_dict = float(data.total_multiplicity[i]) / data.nevents
-                    elif (q == 'midrapidity_yield'): to_dict = float(data.midrapidity_yield[i]) / data.nevents
+                    if (q == 'total_multiplicity'): 
+                        to_dict = data.total_multiplicity[i].astype(float) / data.nevents
+                    elif (q == 'midrapidity_yield'): 
+                        to_dict = data.midrapidity_yield[i].astype(float) / data.nevents
                     elif (q == 'meanpt_midrapidity'): to_dict = float(data.meanpt_midrapidity[i])
                     elif (q == 'meanmt0_midrapidity'): to_dict = float(data.meanmt0_midrapidity[i])
                     elif (q == 'mtspectra'): to_dict = (data.mtbins, \
                                                         data.mthist[i].astype(float) / data.nevents)
                     elif (q == 'yspectra'): to_dict = (data.ybins,\
                                                        data.yhist[i].astype(float) / data.nevents)
-                    elif (q == 'ptspectra'): to_dict = (data.ptbins,\
-                                                       data.pthist_midrapidity[i].astype(float) / data.nevents)
+                    elif (q == 'ptspectra'): to_dict = (data.ptbins, data.pthist_midrapidity[i].astype(float) / data.nevents)
                     # for v2:
                     # Normalization to number of detected particles in given pT bin, to make sure
                     # events with zero entries are not considered.
