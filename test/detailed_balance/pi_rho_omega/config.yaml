@@ -1,4 +1,4 @@
-Version: 1.7
+Version: 1.8
 
 Logging:
   default: WARN
@@ -30,7 +30,7 @@ Output:
         Print_Start_End:    False
     Particles:
         Format: ["Binary"]
-        Only_Final:         False
+        Only_Final:         No
 
 
 Modi:
