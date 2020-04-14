@@ -58,3 +58,4 @@ Collision_Term:
     Two_to_One:           True
     Included_2to2:        ["Elastic"]
     Strings:              False
+    Collision_Criterion:  Stochastic

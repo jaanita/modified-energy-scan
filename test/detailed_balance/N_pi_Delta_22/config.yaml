@@ -54,3 +54,4 @@ Collision_Term:
     Force_Decays_At_End:  False
     Two_to_One:           False
     Strings:              False
+    Collision_Criterion:  Stochastic

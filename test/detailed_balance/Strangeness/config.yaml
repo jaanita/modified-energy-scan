@@ -24,6 +24,7 @@ Collision_Term:
     Two_to_One:             False
     Strings:                False
     Force_Decays_At_End:    False
+    Collision_Criterion:  Stochastic
 
 Modi:
     Box:

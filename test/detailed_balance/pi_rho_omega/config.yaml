@@ -56,3 +56,4 @@ Modi:
 Collision_Term:
     Force_Decays_At_End:  False
     Strings:              False
+    Collision_Criterion:  Stochastic
