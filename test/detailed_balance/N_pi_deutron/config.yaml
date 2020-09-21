@@ -25,7 +25,9 @@ Collision_Term:
     Strings:                False
     Force_Decays_At_End:    False
     Elastic_NN_Cutoff_Sqrts: 1.8
+    # Included_2to2: ["PiDeuteron_to_pidprime","NDeuteron_to_Ndprime"]
     # Included_2to2: ["Elastic","NN_to_NR", "NN_to_DR", "KN_to_KN", "Strangeness_exchange", "NNbar", "PiDeuteron_to_NN"]
+    # Included_2to2: ["Elastic","NN_to_NR", "NN_to_DR", "KN_to_KN", "Strangeness_exchange", "NNbar"]  # wo PiDeuteron_to_NN
     Collision_Criterion: Stochastic
     # Include_2to3: True
 
