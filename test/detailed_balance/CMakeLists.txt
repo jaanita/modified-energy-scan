@@ -18,7 +18,7 @@ function(one_balance_test_general
     # run several instances of SMASH in parallel (with the same input)
     set(particles_files "")
     set(reactions_files "")
-    foreach(i RANGE 1 20)
+    foreach(i RANGE 1 8)
         set(data_folder "${test_folder}/data/${i}")
         set(collisions_file "${data_folder}/collisions_binary.bin")
         set(particles_file "${data_folder}/particles_binary.bin")
@@ -264,6 +264,13 @@ one_balance_test("multi_pi2_eta_etaprime"
     "π⁺,d:N⁺,N⁺|π⁰,d:N⁺,N⁰|π⁻,d:N⁰,N⁰|π⁺,d̅:N̅⁰,N̅⁰|π⁻,d̅:N̅⁻,N̅⁻|π⁰,d̅:N̅⁻,N̅⁰|π⁺,d:π⁺,N⁺,N⁰|π⁰,d:π⁰,N⁺,N⁰|π⁻,d:π⁻,N⁺,N⁰|N⁺,d:N⁺,N⁺,N⁰|N⁰,d:N⁰,N⁺,N⁰|N⁰,d̅:N⁰,N̅⁻,N̅⁰|N⁺,d̅:N⁺,N̅⁻,N̅⁰|N̅⁻,d:N̅⁻,N⁺,N⁰|N̅⁰,d:N̅⁰,N⁺,N⁰|π⁰,d̅:π⁰,N̅⁻,N̅⁰|π⁺,d̅:π⁺,N̅⁻,N̅⁰|π⁻,d̅:π⁻,N̅⁻,N̅⁰|N̅⁰,d̅:N̅⁰,N̅⁻,N̅⁰|N̅⁻,d̅:N̅⁻,N̅⁻,N̅⁰"
     "50.0"
  )
+
+ one_balance_test("multi_N_Nbar_5pi"
+    "π⁺,π⁻,π⁰,N⁺,N⁰,N̅⁰,N̅⁻"
+    "π⁺,π⁺,π⁻,π⁻,π⁰:N⁺,N̅⁻|π⁺,π⁺,π⁻,π⁻,π⁰:N⁰,N̅⁰|π⁺,π⁻,π⁰,π⁰,π⁰:N⁺,N̅⁻|π⁺,π⁻,π⁰,π⁰,π⁰:N⁰,N̅⁰|π⁰,π⁰,π⁰,π⁰,π⁰:N⁺,N̅⁻|π⁰,π⁰,π⁰,π⁰,π⁰:N⁰,N̅⁰"
+    "9.0"
+ )
+
 
 ########## baryonic boxes ##########
 
