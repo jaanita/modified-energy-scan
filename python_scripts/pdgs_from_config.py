@@ -136,7 +136,7 @@ def pdg_to_name_init(configfile):
                         pline = pline[:pline.find('#')]
                     array = pline.split()
                     # get name string
-                    name = unicode(array[0], encoding="UTF-8")
+                    name = str(array[0])
                     # For SMASH < 1.4, the third column is the first PDG code.
                     # For SMASH >= 1.4, it is the parity, and the codes start
                     # at the fourth column.
@@ -182,13 +182,13 @@ def pdg_to_name(pdg, configfile=""):
     """Return name of particle given its PDG code."""
     if len(pdg_dict) == 0:  # initialize dictionary if necessary
         pdg_to_name_init(configfile)
-    return pdg_dict.get(pdg, unicode(pdg))
+    return pdg_dict.get(pdg, str(pdg))
 
 def pdg_to_name_generic(pdg, configfile=""):
     """Return generic name of particle given its PDG code."""
     if len(pdg_dict_gen) == 0:  # initialize dictionary if necessary
         pdg_to_name_init(configfile)
-    return pdg_dict_gen.get(pdg, unicode(pdg))
+    return pdg_dict_gen.get(pdg, str(pdg))
 
 
 def name_to_pdg(name, configfile=""):
@@ -213,4 +213,4 @@ if __name__ == '__main__':
     pdg_to_name_init(config_file)
     pdgs = sorted(pdg_dict.keys(), key = lambda x: abs(x))
     for pdg in pdgs:
-        print '%12i %s' % (pdg, pdg_dict.get(pdg, unicode(pdg)))
+        print('%12i %s' % (pdg, pdg_dict.get(pdg, str(pdg))))

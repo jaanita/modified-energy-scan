@@ -19,7 +19,7 @@ def _read_binary_header(bfile):
     """Read file header from SMASH binary file."""
     magic, format_version, format_extended, length = struct.unpack('=4sHHi', bfile.read(12))
     if magic != "SMSH":
-        print "Fatal error: failed to reproduce magic number."
+        print("Fatal error: failed to reproduce magic number.")
         sys.exit(1)
     smash_version = struct.unpack('%ds' % length, bfile.read(length))
     assert len(smash_version) == 1
@@ -429,14 +429,14 @@ class BinaryReader:
             elif self.format_extended == 0:
                 self.__read_block = _read_binary_block_v4
             else:
-                print "Fatal error: unknown format variant = ", self.format_extended
+                print("Fatal error: unknown format variant = ", self.format_extended)
                 sys.exit(1)
         elif self.format_version == 3:
             self.__read_block = _read_binary_block_v3
         elif self.format_version == 2:
             self.__read_block = _read_binary_block_v2
         else:
-            print "Fatal error: unknown format version = ", self.format_version
+            print("Fatal error: unknown format version = ", self.format_version)
             sys.exit(1)
 
     def __enter__(self):
@@ -488,7 +488,7 @@ def get_block_time(block):
     elif (block['type'] == 'i'):
         return block['incoming']['r'][0][0]
     else:
-        print "Error: invalid usage of get_block_time."
+        print("Error: invalid usage of get_block_time.")
         sys.exit(1)
 
 def get_block_E(block):
