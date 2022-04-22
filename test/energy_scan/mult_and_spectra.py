@@ -6,7 +6,8 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../python_scri
 import smash_basic_scripts as sb
 import argparse
 from multiprocessing import Pool
-
+from scipy.io import savemat
+from os.path import exists
 
 class BulkObservables:
     """
@@ -20,7 +21,7 @@ class BulkObservables:
                        mtbins = np.array([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.4, 2.8, 3.2]),
                        ybins = np.linspace(-4.0, 4.0, 41),
                        ptbins = np.array([0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0, 4.4, 4.8]),
-                       midrapidity_cut = 0.5):
+                       midrapidity_cut = 0.25):
         self.pdglist = pdg_list
         self.npdg = len(pdg_list)
         self.mtbins = mtbins
@@ -31,7 +32,7 @@ class BulkObservables:
         self.smash_version = ''
 
         self.total_multiplicity = np.zeros(self.npdg)
-        self.midrapidity_yield = np.zeros(self.npdg)
+        self.midrapidity_yield = np.zeros(self.npdg) #important one
         self.meanpt_midrapidity = np.zeros(self.npdg)
         self.meanmt0_midrapidity = np.zeros(self.npdg)
         self.mthist = np.zeros((self.npdg, mtbins.size - 1))
@@ -69,7 +70,7 @@ class BulkObservables:
     def add_block(self, block):
         """ Read one block of particles and update bulk observables from it. """
         assert(block['type'] == 'p')
-        E = block['part']['p'][:,0]
+        E = block['part']['p'][:,0] #most likely these are arrays
         px = block['part']['p'][:,1]
         py = block['part']['p'][:,2]
         pz = block['part']['p'][:,3]
@@ -77,28 +78,28 @@ class BulkObservables:
         y = 0.5*np.log((E+pz)/(E-pz))
         pdg = block['part']['pdgid']
 
-        pT2 = px*px + py*py
+        pT2 = px*px + py*py #transverse momentum
         pT = np.sqrt(pT2)
         mT0 = np.sqrt(m0*m0 + pT2) - m0
-        cos2phi = np.where(pT2 > 0.0, (px*px - py*py) / pT2, 0.0)
+        cos2phi = np.where(pT2 > 0.0, (px*px - py*py) / pT2, 0.0) #calculates
 
-        ycut = (np.abs(y) < self.midrapidity_cut)
+        ycut = (np.abs(y) < self.midrapidity_cut) #0.25 according to BES paper
         self.nevents += 1
 
         for i in range(self.npdg):
-            pdgcut = (pdg == self.pdglist[i])
-            added_total_mult = pdgcut.sum()
+            pdgcut = (pdg == self.pdglist[i]) #array of 1's and 0's, where 1 means it is particle pdg
+            added_total_mult = pdgcut.sum() #total number of particles of type pdg
 
-            if (added_total_mult == 0): continue
-            self.yhist[i,:] += np.histogram(y[pdgcut], bins = self.ybins)[0]
+            if (added_total_mult == 0): continue #no particles
+            self.yhist[i,:] += np.histogram(y[pdgcut], bins = self.ybins)[0] #fill y bins
 
-            pdg_and_y_cut = np.logical_and(ycut, pdgcut)
-            added_midrap_yield = pdg_and_y_cut.sum()
+            pdg_and_y_cut = np.logical_and(ycut, pdgcut) #both that type pdg and mid-rapidity, array of 1's and 0's
+            added_midrap_yield = pdg_and_y_cut.sum() #total number of particles of type pdg and at mid-rapidity
 
             self.total_multiplicity[i] += added_total_mult
-            self.midrapidity_yield[i] += added_midrap_yield
+            self.midrapidity_yield[i] += added_midrap_yield #important one that I can use to compare STAR
 
-            if (added_midrap_yield == 0): continue
+            if (added_midrap_yield == 0): continue #no particles in mid-rapidity
             pt_hist_with_cuts = np.histogram(pT[pdg_and_y_cut], bins = self.ptbins)[0]
             self.mthist[i,:] += np.histogram(mT0[pdg_and_y_cut], bins = self.mtbins)[0]
             self.pthist_midrapidity[i,:] += np.histogram(pT[pdg_and_y_cut], bins = self.ptbins)[0]
@@ -136,7 +137,7 @@ class BulkObservables:
 
     def add_from_file(self, one_file):
         """ Computes bulk observables from a single SMASH output file """
-        print(one_file)
+        #print(one_file)
         with sb.BinaryReader(one_file) as reader:
             self.smash_version = reader.smash_version
             block = reader.read_block()
@@ -170,98 +171,24 @@ class BulkObservables:
 
     def save(self, files_to_write):
         """ Saves bulk observables to text files. """
-        yspectra_file, mtspectra_file, ptspectra_file, v2_file, meanmt0_midrapidity_file,\
-        meanpt_midrapidity_file, midrapidity_yield_file, total_multiplicity_file = files_to_write
-        ybin_centers = BulkObservables.bin_centers(self.ybins)
-        with open(yspectra_file, 'w') as f:
-            self.write_header(f)
-            f.write('# y bin edges: %s\n' % np.array_str(self.ybins, max_line_width = 1000000))
-            f.write('# y bin center, number of pdg in bin (pdglist)\n')
-            for bin_number in range(ybin_centers.size):
-                f.write(' %6.3f' % ybin_centers[bin_number])
-                for i in range(self.npdg):
-                     f.write(' %8i' % self.yhist[i, bin_number])
-                f.write('\n')
-        mtbin_centers = BulkObservables.bin_centers(self.mtbins)
-        with open(mtspectra_file, 'w') as f:
-            self.write_header(f)
-            f.write('# mt bin edges: %s\n' % np.array_str(self.mtbins, max_line_width = 1000000))
-            f.write('# mt[GeV] bin center, number of pdg in bin (pdglist)\n')
-            for bin_number in range(mtbin_centers.size):
-                f.write(' %6.3f' % mtbin_centers[bin_number])
-                for i in range(self.npdg):
-                    f.write(' %8i' % self.mthist[i, bin_number])
-                f.write('\n')
-        ptbin_centers = BulkObservables.bin_centers(self.ptbins)
-        with open(ptspectra_file, 'w') as f:
-            self.write_header(f)
-            f.write('# pt bin edges: %s\n' % np.array_str(self.ptbins, max_line_width = 1000000))
-            f.write('# pt[GeV] bin center, number of pdg in bin (pdglist)\n')
-            for bin_number in range(ptbin_centers.size):
-                f.write(' %6.3f' % ptbin_centers[bin_number])
-                for i in range(self.npdg):
-                    f.write(' %8i' % self.pthist_midrapidity[i, bin_number])
-                f.write('\n')
-        with open(v2_file, 'w') as f:
-             self.write_header(f)
-             f.write('# pt bin edges: %s\n' % np.array_str(self.ptbins, max_line_width = 1000000))
-             f.write('# pt[GeV] bin center, v2 of pdg in bin (pdglist)\n')
-             for bin_number in range(ptbin_centers.size):
-                 f.write(' %6.3f' % ptbin_centers[bin_number])
-                 for i in range(self.npdg):
-                     # For each pT, sum of cos2phi over particles has to be divided by number of particles at this pT
-                     v2 = np.where(self.pthist_midrapidity[i, bin_number] > 0,
-                                   self.v2[i, bin_number] / self.pthist_midrapidity[i, bin_number], 0.0)
-                     f.write(' %15.10f' % v2)
-                 f.write('\n')
-
-        for i in [meanmt0_midrapidity_file, meanpt_midrapidity_file,
-                  midrapidity_yield_file, total_multiplicity_file]:
-            with open(i, 'w') as f: self.write_header(f)
-        with open(meanmt0_midrapidity_file, 'a') as f:
-            np.savetxt(f, self.meanmt0_midrapidity, fmt = '%8.5f', newline = ' ')
-        with open(meanpt_midrapidity_file, 'a') as f:
-            np.savetxt(f, self.meanpt_midrapidity, fmt = '%8.5f', newline = ' ')
-        with open(midrapidity_yield_file, 'a') as f:
+        midrapidity_yield_file = files_to_write #name of saving file, still the same will be 100 mat files
+        #mymat={'self.midrapidity_yield':self.midrapidity_yield}
+        #savemat("mymat.mat", mymat)
+        #for i in midrapidity_yield_file:
+        #print(midrapidity_yield_file[0])
+        with open(midrapidity_yield_file[0], 'w') as f: self.write_header(f)
+        with open(midrapidity_yield_file[0], 'a') as f:
             np.savetxt(f, self.midrapidity_yield, fmt = '%8i', newline = ' ')
-        with open(total_multiplicity_file, 'a') as f:
-            np.savetxt(f, self.total_multiplicity, fmt = '%8i', newline = ' ')
+
+    def give_rapidity_array(self):
+        return self.midrapidity_yield
 
     @staticmethod
     def read(files_to_read):
         """ Reads bulk observables, that were saved totext files by the save method. """
-        yspectra_file, mtspectra_file, ptspectra_file, v2_file, meanmt0_midrapidity_file,\
-        meanpt_midrapidity_file, midrapidity_yield_file, total_multiplicity_file = files_to_read
+        midrapidity_yield_file = files_to_read[0]
         spectra = BulkObservables()
-        with open(yspectra_file, 'r') as f:
-            smash_version, analysis_version = f.readline().split(':')[1].split()
-            spectra.smash_version = smash_version
-            spectra.nevents = int(f.readline().split(':')[1])
-            spectra.pdglist = [int(x) for x in f.readline().split(':')[1].split()]
-            spectra.npdg = len(spectra.pdglist)
-            ybinning = f.readline().split('[')[1].split(']')[0].split()
-            spectra.ybins = np.array([float(x) for x in ybinning])
-            spectra.yhist = np.loadtxt(yspectra_file)[:,1:].T
-        with open(mtspectra_file, 'r') as f:
-            for _ in range(3): f.readline()
-            mtbinning = f.readline().split('[')[1].split(']')[0].split()
-            spectra.mtbins = np.array([float(x) for x in mtbinning])
-            spectra.mthist = np.loadtxt(mtspectra_file)[:,1:].T
-        with open(ptspectra_file, 'r') as f:
-            for _ in range(3): f.readline()
-            ptbinning = f.readline().split('[')[1].split(']')[0].split()
-            spectra.ptbins = np.array([float(x) for x in ptbinning])
-            spectra.pthist_midrapidity = np.loadtxt(ptspectra_file)[:,1:].T
-        with open(v2_file, 'r') as f:
-            for _ in range(3): f.readline()
-            f.readline()  # pt-binning is already known from pt-spectra file
-            # Multiply back by number of particles at given pT from all events
-            spectra.v2 = np.loadtxt(v2_file)[:,1:].T * spectra.pthist_midrapidity
-
-        spectra.meanmt0_midrapidity = np.loadtxt(meanmt0_midrapidity_file)
-        spectra.meanpt_midrapidity = np.loadtxt(meanpt_midrapidity_file)
-        spectra.midrapidity_yield = np.loadtxt(midrapidity_yield_file)
-        spectra.total_multiplicity = np.loadtxt(total_multiplicity_file)
+        spectra.midrapidity_yield = np.loadtxt(midrapidity_yield_file) #turn txt to array
         return spectra
 
     @staticmethod
@@ -283,15 +210,12 @@ if __name__ == '__main__':
                """)
     parser.add_argument("--output_files", nargs='+', required=True,
         help = """
-               Exactly 8 file names in a fixed order:
-               output_files = (yspectra_file, mtspectra_file, ptspectra_file, v2_file,
-               meanmt0_midrapidity_file,
-               meanpt_midrapidity_file, midrapidity_yield_file, total_multiplicity_file)
+               Exactly 1 file names in a fixed order:
+               output_files = midrapidity_yield_file
                """)
     parser.add_argument("--input_files", nargs='+', required=True,
         help = """
-               With --merge these are 8xN filenames of format 'output_files' to be merged.
-               Otherwise filename(s) with SMASH binary particles output.
+               directory, energy name, see below coe
                """)
     parser.add_argument("--parallel", required=False, default=False,
         help = """
@@ -302,27 +226,75 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if (args.merge):
-        assert(len(args.input_files) % 8 == 0)
+        #assert(len(args.input_files) % 8 == 0)
         files_to_read_list = list(zip(*(iter(args.input_files),) * 8))
         BulkObservables.merge_basic_spectra(files_to_read_list, args.output_files)
     else:
-        pdg_list = [211,-211,111,321,-321,2212,-2212,3122,-3122,1000010020,-1000010020,3312,-3312,3334,-3334,3212,-3212]
 
+        pdg_list = [2212,-2212,321,-321,211,-211,3122,-3122,1000010020,-1000010020,3312,-3312,3334,-3334,3212,-3212]
+        # proton, antiproton, kaon plus, kaon minus, pion plus , pion minus is the order of the tables
         def get_bulk_observables_from_file(input_file):
             b = BulkObservables(pdg_list = pdg_list)
             b.add_from_file(input_file)
             return b
         if (args.parallel):
-           pool = Pool()
-           spectra = get_bulk_observables_from_file(args.input_files[0])
-           spectra_list = pool.map_async(get_bulk_observables_from_file, args.input_files[1:])
-           for i in spectra_list.get():
-               spectra += i
-        else:
-            spectra = BulkObservables(pdg_list = pdg_list)
-            spectra.add_from_files(args.input_files)
-        spectra.save(args.output_files)
+            pool = Pool()
+            spectra = get_bulk_observables_from_file(args.input_files[0])
+            spectra_list = pool.map_async(get_bulk_observables_from_file, args.input_files[1:])
+            for i in spectra_list.get():
+                spectra += i
+        else: #chanigng to accommodate many files and design points # don't do parallel Yet
+            total_number_design = 100
+            centralities1 = ["_0_5", "_5_10", "_10_20", "_20_40", "_40_60", "_60_80"]
+            centralities2 = ["_0_5", "_5_10", "_10_20", "_20_30", "_30_40", "_40_60", "_60_80"] #14.5 centralities
+            energy = args.input_files[0]
+            if (energy == "14.5"):
+                centralities = centralities2
+            else:
+                centralities = centralities1
+            smash_full_array = np.zeros((total_number_design,len(centralities)*7)) #4 design points, 6 centralities, 7 values (6 charged_hadrons, 1 sum_charged_hadrons)
+
+            for design_point in range(total_number_design):
+                #smash_point_array = np.zeros(0)
+                for centrality in centralities:
+                    directory = "../../../JETSCAPE/build/output_"+energy+"/"+str(design_point)+"/"+centrality+"/"+"particles_binary.bin"
+                    #change the above line to the directory of your output files
+                    spectra = BulkObservables(pdg_list = pdg_list)
+                    file_exists = exists(directory)
+                    if(file_exists):
+                        #print('file exists')
+                        spectra.add_from_file(directory)
+                        cent_rapidity = spectra.give_rapidity_array()
+                        sum_charged_hadrons = sum(cent_rapidity)
+
+                    else:
+                        print("file does not exist: ",directory)
+                        print("writing as zeros")
+                        cent_rapidity = np.zeros(6)
+                        sum_charged_hadrons = 0
+
+                    if centrality==centralities[0]:
+                        smash_point_array = cent_rapidity[0:6]
+
+                        smash_point_array = np.append(smash_point_array,sum_charged_hadrons)
+                        #print(smash_point_array)
+                    else:
+                        smash_point_array = np.concatenate((smash_point_array, cent_rapidity[0:6]))
+
+                        smash_point_array = np.append(smash_point_array,sum_charged_hadrons)
+                        #print(smash_point_array)
+
+
+                smash_full_array[design_point,:]=smash_point_array
+            #with open(args.output_files[0], 'w') as f: spectra.write_header(f)
+            with open(args.output_files[0], 'w') as f:
+                #np.savetxt(f, smash, delimiter=",")
+                np.savetxt(f, smash_full_array) #fmt = '%8i', newline = ' ')
+
+        #spectra.save(args.output_files)
 
         # Read-write consistency check
-        spectra2 = BulkObservables.read(args.output_files)
-        assert(spectra == spectra2)
+        #print(spectra.midrapidity_yield)
+        #spectra2 = BulkObservables.read(args.output_files)
+        #print(spectra2.midrapidity_yield)
+        #all(spectra.midrapidity_yield == spectra2.midrapidity_yield)
