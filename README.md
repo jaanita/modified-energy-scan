@@ -9,30 +9,9 @@ extracted by means of the SMASH-analysis suite, can be found
 
 Among the observables and cross-checks that are extracted with the scripts in
 this repository are:
-- **Angular Distributions** <br/>
-  Non-isotropic cross sections of NN &leftrightarrow; NΔ scatterings.
-- **Cross Sections**<br/>
-  Inclusive and exclusive cross sections for different
-  elementary scattering processes.
-- **Densities**<br/>
-  Density distribution in an infinite matter simulation (box) and density evolution in the central cell of a Au+Au collision.
-- **Detailed Balance**<br/>
-  Detailed balance tests in an infinite matter simulation (box) with different
-  particle species.
-- **Dileptons**<br/>
-  Invariant mass spectra for dileptons from different elementary and heavy-ion
-  collisions.
-- **Scattering Rates**<br/>
-  Analysis of scattering rates in infinite matter simulations with only elastic
-  collisions.
 - **Energy Scan**<br/>
   Multiplicities, midrapidity yields, transverse momentum and rapidity spectra
   for the most abundant hadron species over a large range of beam energies.
-- **FOPI Pions**<br/>
-  Pion multiplicities and transverse momentum spectra following the FOPI
-  experiment.
-- **Afterburner**<br/>
-  Multiplicities, midrapidity yields, transverse momentum and rapidity spectra for the most abundant hadron species for afterburner runs.
 
 
 ## Prerequisites
